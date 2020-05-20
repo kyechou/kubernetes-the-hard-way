@@ -11,7 +11,8 @@ sed -e '/^.*ubuntu-bionic.*/d' -i /etc/hosts
 cat >> /etc/hosts <<EOF
 192.168.5.11  master-1
 192.168.5.12  master-2
-192.168.5.21  worker-1
-192.168.5.22  worker-2
-192.168.5.30  lb
+192.168.5.32  worker-1
+192.168.5.48  worker-2
+192.168.5.64  worker-3
+192.168.5.128  lb
 EOF
