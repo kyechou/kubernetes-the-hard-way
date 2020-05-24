@@ -85,7 +85,7 @@ Vagrant.configure("2") do |config|
         vb.cpus = 1
     end
     node.vm.hostname = "loadbalancer"
-    node.vm.network :private_network, ip: IP_NW + "#{LB_IP_START}" + ".1"
+    node.vm.network :private_network, ip: IP_NW + "5.#{LB_IP_START}"
 	node.vm.network "forwarded_port", guest: 22, host: 2730
 
     node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
