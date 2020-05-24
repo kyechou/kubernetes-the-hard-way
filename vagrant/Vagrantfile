@@ -6,9 +6,10 @@
 NUM_MASTER_NODE = 2
 NUM_WORKER_NODE = 3
 
-IP_NW = "192.168.5."
+IP_NW = "192.168."
+MASTER_IP_BASE = "5."
 MASTER_IP_START = 10
-NODE_IP_START = 32
+NODE_IP_START = 10
 LB_IP_START = 128
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -63,7 +64,7 @@ Vagrant.configure("2") do |config|
             vb.cpus = 2
         end
         node.vm.hostname = "master-#{i}"
-        node.vm.network :private_network, ip: IP_NW + "#{MASTER_IP_START + i}"
+        node.vm.network :private_network, ip: IP_NW + MASTER_IP_BASE + "#{MASTER_IP_START + i}"
         node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
 
         node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
@@ -84,7 +85,7 @@ Vagrant.configure("2") do |config|
         vb.cpus = 1
     end
     node.vm.hostname = "loadbalancer"
-    node.vm.network :private_network, ip: IP_NW + "#{LB_IP_START}"
+    node.vm.network :private_network, ip: IP_NW + "#{LB_IP_START}" + ".1"
 	node.vm.network "forwarded_port", guest: 22, host: 2730
 
     node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
@@ -104,7 +105,7 @@ Vagrant.configure("2") do |config|
             vb.cpus = 1
         end
         node.vm.hostname = "worker-#{i}"
-        node.vm.network :private_network, ip: IP_NW + "#{NODE_IP_START + (i-1)*16}"
+        node.vm.network :private_network, ip: IP_NW + "#{NODE_IP_START + (i-1)*10}" + ".1"
 		node.vm.network "forwarded_port", guest: 22, host: "#{2720 + i}"
 
         node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
