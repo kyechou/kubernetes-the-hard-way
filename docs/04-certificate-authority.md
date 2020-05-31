@@ -156,7 +156,7 @@ DNS.4 = kubernetes.default.svc.cluster.local
 IP.1 = 10.96.0.1
 IP.2 = 192.168.5.11
 IP.3 = 192.168.5.12
-IP.4 = 192.168.5.30
+IP.4 = 192.168.5.100
 IP.5 = 127.0.0.1
 EOF
 ```
@@ -245,6 +245,11 @@ for instance in master-1 master-2; do
     etcd-server.key etcd-server.crt \
     ${instance}:~/
 done
+```
+
+```
+ scp -i /home/summer/kubernetes-the-hard-way-vm/vagrant/.vagrant/machines/master-1/virtualbox/private_key -P 2222 ca.crt ca.key kube-apiserver.key kube-apiserver.crt service-account.key service-account.crt etcd-server.key etcd-server.crt vagrant@127.0.0.1:~/
+
 ```
 
 > The `kube-proxy`, `kube-controller-manager`, `kube-scheduler`, and `kubelet` client certificates will be used to generate client authentication configuration files in the next lab. These certificates will be embedded into the client authentication configuration files. We will then copy those configuration files to the other master nodes.
