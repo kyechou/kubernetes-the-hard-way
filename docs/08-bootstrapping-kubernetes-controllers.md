@@ -23,11 +23,12 @@ sudo mkdir -p /etc/kubernetes/config
 Download the official Kubernetes release binaries:
 
 ```
+DOWNLOAD_URL="https://storage.googleapis.com/kubernetes-release/release"
 wget -q --show-progress --https-only --timestamping \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kube-apiserver" \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kube-controller-manager" \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kube-scheduler" \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl"
+  "${DOWNLOAD_URL}/v1.18.9/bin/linux/amd64/kube-apiserver" \
+  "${DOWNLOAD_URL}/v1.18.9/bin/linux/amd64/kube-controller-manager" \
+  "${DOWNLOAD_URL}/v1.18.9/bin/linux/amd64/kube-scheduler" \
+  "${DOWNLOAD_URL}/v1.18.9/bin/linux/amd64/kubectl"
 ```
 
 Reference: https://kubernetes.io/docs/setup/release/#server-binaries
@@ -35,29 +36,24 @@ Reference: https://kubernetes.io/docs/setup/release/#server-binaries
 Install the Kubernetes binaries:
 
 ```
-{
-  chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl
-  sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
-}
+chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl
+sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
 ```
 
 ### Configure the Kubernetes API Server
 
 ```
-{
-  sudo mkdir -p /var/lib/kubernetes/
-
-  sudo cp ca.crt ca.key kube-apiserver.crt kube-apiserver.key \
-    service-account.key service-account.crt \
-    etcd-server.key etcd-server.crt \
+sudo mkdir -p /var/lib/kubernetes/
+sudo cp certs/ca.crt certs/ca.key certs/kube-apiserver.crt certs/kube-apiserver.key \
+    certs/service-account.key certs/service-account.crt \
+    certs/etcd-server.key certs/etcd-server.crt \
     encryption-config.yaml /var/lib/kubernetes/
-}
 ```
 
 The instance internal IP address will be used to advertise the API Server to members of the cluster. Retrieve the internal IP address for the current compute instance:
 
 ```
-INTERNAL_IP=$(ip addr show enp0s8 | grep "inet " | awk '{print $2}' | cut -d / -f 1)
+INTERNAL_IP=$(ip addr show eth1 | grep "inet " | awk '{print $2}' | cut -d / -f 1)
 ```
 
 Verify it is set
@@ -99,9 +95,9 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --kubelet-client-certificate=/var/lib/kubernetes/kube-apiserver.crt \\
   --kubelet-client-key=/var/lib/kubernetes/kube-apiserver.key \\
   --kubelet-https=true \\
-  --runtime-config=api/all \\
+  --runtime-config=api/all=true \\
   --service-account-key-file=/var/lib/kubernetes/service-account.crt \\
-  --service-cluster-ip-range=10.96.0.0/24 \\
+  --service-cluster-ip-range=192.168.5.0/24 \\
   --service-node-port-range=30000-32767 \\
   --tls-cert-file=/var/lib/kubernetes/kube-apiserver.crt \\
   --tls-private-key-file=/var/lib/kubernetes/kube-apiserver.key \\
@@ -133,7 +129,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 [Service]
 ExecStart=/usr/local/bin/kube-controller-manager \\
   --address=0.0.0.0 \\
-  --cluster-cidr=192.168.0.0/16 \\
+  --cluster-cidr=192.168.5.0/24 \\
   --cluster-name=kubernetes \\
   --cluster-signing-cert-file=/var/lib/kubernetes/ca.crt \\
   --cluster-signing-key-file=/var/lib/kubernetes/ca.key \\
@@ -141,7 +137,7 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --leader-elect=true \\
   --root-ca-file=/var/lib/kubernetes/ca.crt \\
   --service-account-private-key-file=/var/lib/kubernetes/service-account.key \\
-  --service-cluster-ip-range=10.96.0.0/24 \\
+  --service-cluster-ip-range=192.168.5.0/24 \\
   --use-service-account-credentials=true \\
   --v=2
 Restart=on-failure
@@ -185,11 +181,9 @@ EOF
 ### Start the Controller Services
 
 ```
-{
-  sudo systemctl daemon-reload
-  sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
-  sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
-}
+sudo systemctl daemon-reload
+sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
+sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
 ```
 
 > Allow up to 10 seconds for the Kubernetes API Server to fully initialize.
@@ -227,7 +221,7 @@ loadbalancer# sudo apt-get update && sudo apt-get install -y haproxy
 ```
 
 ```
-loadbalancer# cat <<EOF | sudo tee /etc/haproxy/haproxy.cfg 
+loadbalancer# cat <<EOF | sudo tee /etc/haproxy/haproxy.cfg
 frontend kubernetes
     bind 192.168.5.30:6443
     option tcplog

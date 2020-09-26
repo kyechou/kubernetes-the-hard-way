@@ -239,19 +239,20 @@ service-account.crt
 Copy the appropriate certificates and private keys to each controller instance:
 
 ```
-for instance in master-1 master-2; do
-  scp ca.crt ca.key kube-apiserver.key kube-apiserver.crt \
+mkdir certs
+cp ca.crt ca.key kube-apiserver.key kube-apiserver.crt \
     service-account.key service-account.crt \
     etcd-server.key etcd-server.crt \
-    ${instance}:~/
+    certs/
+for instance in master-1 master-2; do
+    scp -r certs vagrant@${instance}:~/
 done
 ```
 
-```
- scp -i /home/summer/kubernetes-the-hard-way-vm/vagrant/.vagrant/machines/master-1/virtualbox/private_key -P 2222 ca.crt ca.key kube-apiserver.key kube-apiserver.crt service-account.key service-account.crt etcd-server.key etcd-server.crt vagrant@127.0.0.1:~/
-
-```
-
-> The `kube-proxy`, `kube-controller-manager`, `kube-scheduler`, and `kubelet` client certificates will be used to generate client authentication configuration files in the next lab. These certificates will be embedded into the client authentication configuration files. We will then copy those configuration files to the other master nodes.
+> The `kube-proxy`, `kube-controller-manager`, `kube-scheduler`, and `kubelet`
+> client certificates will be used to generate client authentication
+> configuration files in the next lab. These certificates will be embedded into
+> the client authentication configuration files. We will then copy those
+> configuration files to the other master nodes.
 
 Next: [Generating Kubernetes Configuration Files for Authentication](05-kubernetes-configuration-files.md)

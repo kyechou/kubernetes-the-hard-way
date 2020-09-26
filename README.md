@@ -1,6 +1,6 @@
 > This tutorial is a modified version of the original developed by [Kelsey Hightower](https://github.com/kelseyhightower/kubernetes-the-hard-way).
 
-This repository holds the supporting material for the [Certified Kubernetes Administrators Course](https://kodekloud.com/p/certified-kubernetes-administrator-with-practice-tests). There are two major sections. 
+This repository holds the supporting material for the [Certified Kubernetes Administrators Course](https://kodekloud.com/p/certified-kubernetes-administrator-with-practice-tests). There are two major sections.
 
 - [Kubernetes The Hard Way on VirtualBox](#kubernetes-the-hard-way-on-virtualbox)
 - [Answers to Practice Tests hosted on KodeKloud](/practice-questions-answers)
@@ -29,11 +29,11 @@ The target audience for this tutorial is someone planning to support a productio
 
 Kubernetes The Hard Way guides you through bootstrapping a highly available Kubernetes cluster with end-to-end encryption between components and RBAC authentication.
 
-* [Kubernetes](https://github.com/kubernetes/kubernetes) 1.13.0
+* [Kubernetes](https://github.com/kubernetes/kubernetes) 1.18.9
 * [Docker Container Runtime](https://github.com/containerd/containerd) 18.06
 * [CNI Container Networking](https://github.com/containernetworking/cni) 0.7.5
 * [Weave Networking](https://www.weave.works/docs/net/latest/kubernetes/kube-addon/)
-* [etcd](https://github.com/coreos/etcd) v3.3.9
+* [etcd](https://github.com/etcd-io/etcd) v3.4.13
 * [CoreDNS](https://github.com/coredns/coredns) v1.2.2
 
 ## Labs

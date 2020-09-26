@@ -8,10 +8,10 @@ In this section you will generate kubeconfig files for the `controller manager`,
 
 ### Kubernetes Public IP Address
 
-Each kubeconfig requires a Kubernetes API Server to connect to. To support high availability the IP address assigned to the load balancer will be used. In our case it is `192.168.5.30`
+Each kubeconfig requires a Kubernetes API Server to connect to. To support high availability the IP address assigned to the load balancer will be used. In our case it is `192.168.5.100`
 
 ```
-LOADBALANCER_ADDRESS=192.168.5.30
+LOADBALANCER_ADDRESS=192.168.5.100
 ```
 
 ### The kube-proxy Kubernetes Configuration File
@@ -19,62 +19,57 @@ LOADBALANCER_ADDRESS=192.168.5.30
 Generate a kubeconfig file for the `kube-proxy` service:
 
 ```
-{
-  kubectl config set-cluster kubernetes-the-hard-way \
-    --certificate-authority=ca.crt \
+kubectl config set-cluster k8s-cluster \
+    --certificate-authority=./certs/ca.crt \
     --embed-certs=true \
     --server=https://${LOADBALANCER_ADDRESS}:6443 \
     --kubeconfig=kube-proxy.kubeconfig
 
-  kubectl config set-credentials system:kube-proxy \
-    --client-certificate=kube-proxy.crt \
-    --client-key=kube-proxy.key \
+kubectl config set-credentials system:kube-proxy \
+    --client-certificate=./certs/kube-proxy.crt \
+    --client-key=./certs/kube-proxy.key \
     --embed-certs=true \
     --kubeconfig=kube-proxy.kubeconfig
 
-  kubectl config set-context default \
-    --cluster=kubernetes-the-hard-way \
+kubectl config set-context default \
+    --cluster=k8s-cluster \
     --user=system:kube-proxy \
     --kubeconfig=kube-proxy.kubeconfig
 
-  kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
-}
+kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 ```
 
 Results:
 
 ```
 kube-proxy.kubeconfig
-
+```
 
 Reference docs for kube-proxy [here](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)
-```
 
 ### The kube-controller-manager Kubernetes Configuration File
 
 Generate a kubeconfig file for the `kube-controller-manager` service:
 
 ```
-{
-  kubectl config set-cluster kubernetes-the-hard-way \
-    --certificate-authority=ca.crt \
+kubectl config set-cluster k8s-cluster \
+    --certificate-authority=./certs/ca.crt \
     --embed-certs=true \
     --server=https://127.0.0.1:6443 \
     --kubeconfig=kube-controller-manager.kubeconfig
 
-  kubectl config set-credentials system:kube-controller-manager \
-    --client-certificate=kube-controller-manager.crt \
-    --client-key=kube-controller-manager.key \
+kubectl config set-credentials system:kube-controller-manager \
+    --client-certificate=./certs/kube-controller-manager.crt \
+    --client-key=./certs/kube-controller-manager.key \
     --embed-certs=true \
     --kubeconfig=kube-controller-manager.kubeconfig
 
-  kubectl config set-context default \
-    --cluster=kubernetes-the-hard-way \
+kubectl config set-context default \
+    --cluster=k8s-cluster \
     --user=system:kube-controller-manager \
     --kubeconfig=kube-controller-manager.kubeconfig
 
-  kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
-}
+kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
 ```
 
 Results:
@@ -90,26 +85,24 @@ Reference docs for kube-controller-manager [here](https://kubernetes.io/docs/ref
 Generate a kubeconfig file for the `kube-scheduler` service:
 
 ```
-{
-  kubectl config set-cluster kubernetes-the-hard-way \
-    --certificate-authority=ca.crt \
+kubectl config set-cluster k8s-cluster \
+    --certificate-authority=./certs/ca.crt \
     --embed-certs=true \
     --server=https://127.0.0.1:6443 \
     --kubeconfig=kube-scheduler.kubeconfig
 
-  kubectl config set-credentials system:kube-scheduler \
-    --client-certificate=kube-scheduler.crt \
-    --client-key=kube-scheduler.key \
+kubectl config set-credentials system:kube-scheduler \
+    --client-certificate=./certs/kube-scheduler.crt \
+    --client-key=./certs/kube-scheduler.key \
     --embed-certs=true \
     --kubeconfig=kube-scheduler.kubeconfig
 
-  kubectl config set-context default \
-    --cluster=kubernetes-the-hard-way \
+kubectl config set-context default \
+    --cluster=k8s-cluster \
     --user=system:kube-scheduler \
     --kubeconfig=kube-scheduler.kubeconfig
 
-  kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
-}
+kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 ```
 
 Results:
@@ -125,26 +118,24 @@ Reference docs for kube-scheduler [here](https://kubernetes.io/docs/reference/co
 Generate a kubeconfig file for the `admin` user:
 
 ```
-{
-  kubectl config set-cluster kubernetes-the-hard-way \
-    --certificate-authority=ca.crt \
+kubectl config set-cluster k8s-cluster \
+    --certificate-authority=./certs/ca.crt \
     --embed-certs=true \
     --server=https://127.0.0.1:6443 \
     --kubeconfig=admin.kubeconfig
 
-  kubectl config set-credentials admin \
-    --client-certificate=admin.crt \
-    --client-key=admin.key \
+kubectl config set-credentials admin \
+    --client-certificate=./certs/admin.crt \
+    --client-key=./certs/admin.key \
     --embed-certs=true \
     --kubeconfig=admin.kubeconfig
 
-  kubectl config set-context default \
-    --cluster=kubernetes-the-hard-way \
+kubectl config set-context default \
+    --cluster=k8s-cluster \
     --user=admin \
     --kubeconfig=admin.kubeconfig
 
-  kubectl config use-context default --kubeconfig=admin.kubeconfig
-}
+kubectl config use-context default --kubeconfig=admin.kubeconfig
 ```
 
 Results:
@@ -155,15 +146,13 @@ admin.kubeconfig
 
 Reference docs for kubeconfig [here](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/)
 
-##
-
 ## Distribute the Kubernetes Configuration Files
 
 Copy the appropriate `kube-proxy` kubeconfig files to each worker instance:
 
 ```
-for instance in worker-1 worker-2; do
-  scp kube-proxy.kubeconfig ${instance}:~/
+for instance in worker-1 worker-2 worker-3; do
+  scp kube-proxy.kubeconfig vagrant@${instance}:~/
 done
 ```
 
@@ -171,7 +160,7 @@ Copy the appropriate `admin.kubeconfig`, `kube-controller-manager` and `kube-sch
 
 ```
 for instance in master-1 master-2; do
-  scp admin.kubeconfig kube-controller-manager.kubeconfig kube-scheduler.kubeconfig ${instance}:~/
+  scp admin.kubeconfig kube-controller-manager.kubeconfig kube-scheduler.kubeconfig vagrant@${instance}:~/
 done
 ```
 

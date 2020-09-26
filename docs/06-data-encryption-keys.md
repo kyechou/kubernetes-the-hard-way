@@ -36,9 +36,10 @@ Copy the `encryption-config.yaml` encryption config file to each controller inst
 
 ```
 for instance in master-1 master-2; do
-  scp encryption-config.yaml ${instance}:~/
+  scp encryption-config.yaml vagrant@${instance}:~/
 done
 ```
+
 Reference: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#encrypting-your-data
 
 Next: [Bootstrapping the etcd Cluster](07-bootstrapping-etcd.md)
