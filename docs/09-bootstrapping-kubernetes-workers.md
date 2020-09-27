@@ -220,6 +220,9 @@ EOF
 ### Start the Worker Services
 
 On worker-1:
+
+> Before starting kubelet, remember to disable swap first (`sudo swapoff -a`).
+
 ```
 sudo systemctl daemon-reload
 sudo systemctl enable kubelet kube-proxy
@@ -242,7 +245,7 @@ Output:
 
 ```
 NAME       STATUS     ROLES    AGE   VERSION
-worker-1   NotReady   <none>   93s   v1.13.0
+worker-1   NotReady   <none>   93s   v1.18.9
 ```
 
 > Note: It is OK for the worker node to be in a NotReady state. That is because
