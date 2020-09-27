@@ -43,8 +43,8 @@ Output:
 NAME                 STATUS    MESSAGE             ERROR
 controller-manager   Healthy   ok
 scheduler            Healthy   ok
-etcd-1               Healthy   {"health":"true"}
 etcd-0               Healthy   {"health":"true"}
+etcd-1               Healthy   {"health":"true"}
 ```
 
 List the nodes in the remote Kubernetes cluster:
@@ -56,9 +56,10 @@ kubectl get nodes
 Output:
 
 ```
-NAME       STATUS   ROLES    AGE    VERSION
-worker-1   NotReady    <none>   118s   v1.13.0
-worker-2   NotReady    <none>   118s   v1.13.0
+NAME       STATUS     ROLES    AGE   VERSION
+worker-1   NotReady   <none>   88m   v1.18.9
+worker-2   NotReady   <none>   10m   v1.18.9
+worker-3   NotReady   <none>   10m   v1.18.9
 ```
 
 Note: It is OK for the worker node to be in a `NotReady` state. Worker nodes will come into `Ready` state once networking is configured.
