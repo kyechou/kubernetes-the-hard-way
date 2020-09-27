@@ -1,10 +1,15 @@
 # Bootstrapping the Kubernetes Control Plane
 
-In this lab you will bootstrap the Kubernetes control plane across 2 compute instances and configure it for high availability. You will also create an external load balancer that exposes the Kubernetes API Servers to remote clients. The following components will be installed on each node: Kubernetes API Server, Scheduler, and Controller Manager.
+In this lab you will bootstrap the Kubernetes control plane across 2 compute
+instances and configure it for high availability. You will also create an
+external load balancer that exposes the Kubernetes API Servers to remote
+clients. The following components will be installed on each node: Kubernetes API
+Server, Scheduler, and Controller Manager.
 
 ## Prerequisites
 
-The commands in this lab must be run on each controller instance: `master-1`, and `master-2`. Login to each controller instance using SSH Terminal. Example:
+The commands in this lab must be run on each controller instance: `master-1`,
+and `master-2`. Login to each controller instance using SSH Terminal. Example:
 
 ### Running commands in parallel with tmux
 
@@ -97,7 +102,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --kubelet-https=true \\
   --runtime-config=api/all=true \\
   --service-account-key-file=/var/lib/kubernetes/service-account.crt \\
-  --service-cluster-ip-range=192.168.5.0/24 \\
+  --service-cluster-ip-range=172.16.0.0/16 \\
   --service-node-port-range=30000-32767 \\
   --tls-cert-file=/var/lib/kubernetes/kube-apiserver.crt \\
   --tls-private-key-file=/var/lib/kubernetes/kube-apiserver.key \\
@@ -129,7 +134,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 [Service]
 ExecStart=/usr/local/bin/kube-controller-manager \\
   --address=0.0.0.0 \\
-  --cluster-cidr=192.168.5.0/24 \\
+  --cluster-cidr=10.42.0.0/16 \\
   --cluster-name=kubernetes \\
   --cluster-signing-cert-file=/var/lib/kubernetes/ca.crt \\
   --cluster-signing-key-file=/var/lib/kubernetes/ca.key \\
@@ -137,7 +142,7 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --leader-elect=true \\
   --root-ca-file=/var/lib/kubernetes/ca.crt \\
   --service-account-private-key-file=/var/lib/kubernetes/service-account.key \\
-  --service-cluster-ip-range=192.168.5.0/24 \\
+  --service-cluster-ip-range=172.16.0.0/16 \\
   --use-service-account-credentials=true \\
   --v=2
 Restart=on-failure
@@ -207,7 +212,9 @@ etcd-1               Healthy   {"health": "true"}
 
 ## The Kubernetes Frontend Load Balancer
 
-In this section you will provision an external load balancer to front the Kubernetes API Servers. The `kubernetes-the-hard-way` static IP address will be attached to the resulting load balancer.
+In this section you will provision an external load balancer to front the
+Kubernetes API Servers. The `kubernetes-the-hard-way` static IP address will be
+attached to the resulting load balancer.
 
 
 ### Provision a Network Load Balancer
@@ -223,7 +230,7 @@ loadbalancer# sudo apt-get update && sudo apt-get install -y haproxy
 ```
 loadbalancer# cat <<EOF | sudo tee /etc/haproxy/haproxy.cfg
 frontend kubernetes
-    bind 192.168.5.30:6443
+    bind 192.168.5.100:6443
     option tcplog
     mode tcp
     default_backend kubernetes-master-nodes
@@ -238,7 +245,8 @@ EOF
 ```
 
 ```
-loadbalancer# sudo service haproxy restart
+loadbalancer# sudo systemctl enable haproxy
+loadbalancer# sudo systemctl restart haproxy
 ```
 
 ### Verification
@@ -246,7 +254,7 @@ loadbalancer# sudo service haproxy restart
 Make a HTTP request for the Kubernetes version info:
 
 ```
-curl  https://192.168.5.30:6443/version -k
+curl https://192.168.5.100:6443/version -k
 ```
 
 > output
@@ -254,12 +262,12 @@ curl  https://192.168.5.30:6443/version -k
 ```
 {
   "major": "1",
-  "minor": "13",
-  "gitVersion": "v1.13.0",
-  "gitCommit": "ddf47ac13c1a9483ea035a79cd7c10005ff21a6d",
+  "minor": "18",
+  "gitVersion": "v1.18.9",
+  "gitCommit": "94f372e501c973a7fa9eb40ec9ebd2fe7ca69848",
   "gitTreeState": "clean",
-  "buildDate": "2018-12-03T20:56:12Z",
-  "goVersion": "go1.11.2",
+  "buildDate": "2020-09-16T13:47:43Z",
+  "goVersion": "go1.13.15",
   "compiler": "gc",
   "platform": "linux/amd64"
 }
