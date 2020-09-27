@@ -31,10 +31,23 @@ Kubernetes The Hard Way guides you through bootstrapping a highly available Kube
 
 * [Kubernetes](https://github.com/kubernetes/kubernetes) 1.18.9
 * [Docker Container Runtime](https://github.com/containerd/containerd) 18.06
-* [CNI Container Networking](https://github.com/containernetworking/cni) 0.7.5
+* [CNI Container Networking](https://github.com/containernetworking/plugins) 0.8.7
 * [Weave Networking](https://www.weave.works/docs/net/latest/kubernetes/kube-addon/)
 * [etcd](https://github.com/etcd-io/etcd) v3.4.13
 * [CoreDNS](https://github.com/coredns/coredns) v1.2.2
+
+### Cluster Networking Details
+
+* Nodes network (master-{1,2}, worker-{1-3}, loadbalancer): `192.168.5.0/24`.
+    * master-1: `192.168.5.11`.
+    * master-2: `192.168.5.12`.
+    * worker-1: `192.168.5.21`.
+    * worker-2: `192.168.5.22`.
+    * worker-3: `192.168.5.23`.
+    * loadbalancer: `192.168.5.100`.
+* Services network (service cluster IP range): `172.16.0.0/16`.
+    * kube-dns: `172.16.0.10`
+* Pods network (cluster CIDR): `10.222.0.0/16`.
 
 ## Labs
 
