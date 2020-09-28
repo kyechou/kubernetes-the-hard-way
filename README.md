@@ -6,7 +6,7 @@ This repository holds the supporting material for the [Certified Kubernetes Admi
 - [Answers to Practice Tests hosted on KodeKloud](/practice-questions-answers)
 
 
-# Kubernetes The Hard Way On VirtualBox
+# Kubernetes The Hard Way On KVM (w/ Libvirt)
 
 This tutorial walks you through setting up Kubernetes the hard way on a local machine using VirtualBox.
 This guide is not for people looking for a fully automated command to bring up a Kubernetes cluster.
