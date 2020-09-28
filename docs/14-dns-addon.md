@@ -7,7 +7,7 @@ In this lab you will deploy the [DNS add-on](https://kubernetes.io/docs/concepts
 Deploy the `coredns` cluster add-on:
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/mmumshad/kubernetes-the-hard-way/master/deployments/coredns.yaml
+kubectl apply -f ./deployments/coredns.yaml
 ```
 
 > output
@@ -17,7 +17,7 @@ serviceaccount/coredns created
 clusterrole.rbac.authorization.k8s.io/system:coredns created
 clusterrolebinding.rbac.authorization.k8s.io/system:coredns created
 configmap/coredns created
-deployment.extensions/coredns created
+deployment.apps/coredns created
 service/kube-dns created
 ```
 
@@ -30,9 +30,9 @@ kubectl get pods -l k8s-app=kube-dns -n kube-system
 > output
 
 ```
-NAME                       READY   STATUS    RESTARTS   AGE
-coredns-699f8ddd77-94qv9   1/1     Running   0          20s
-coredns-699f8ddd77-gtcgb   1/1     Running   0          20s
+NAME                      READY   STATUS    RESTARTS   AGE
+coredns-8b7d684c6-lnhr2   1/1     Running   0          13s
+coredns-8b7d684c6-v6pt6   1/1     Running   0          13s
 ```
 
 Reference: https://kubernetes.io/docs/tasks/administer-cluster/coredns/#installing-coredns
@@ -42,7 +42,7 @@ Reference: https://kubernetes.io/docs/tasks/administer-cluster/coredns/#installi
 Create a `busybox` deployment:
 
 ```
-kubectl run --generator=run-pod/v1  busybox --image=busybox:1.28 --command -- sleep 3600
+kubectl run --generator=run-pod/v1 busybox --image=busybox:1.28 --command -- sleep 3600
 ```
 
 List the pod created by the `busybox` deployment:
@@ -54,8 +54,8 @@ kubectl get pods -l run=busybox
 > output
 
 ```
-NAME                      READY   STATUS    RESTARTS   AGE
-busybox-bd8fb7cbd-vflm9   1/1     Running   0          10s
+NAME      READY   STATUS    RESTARTS   AGE
+busybox   1/1     Running   0          35s
 ```
 
 Execute a DNS lookup for the `kubernetes` service inside the `busybox` pod:
@@ -67,11 +67,11 @@ kubectl exec -ti busybox -- nslookup kubernetes
 > output
 
 ```
-Server:    10.96.0.10
-Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+Server:    172.16.0.10
+Address 1: 172.16.0.10 kube-dns.kube-system.svc.cluster.local
 
 Name:      kubernetes
-Address 1: 10.96.0.1 kubernetes.default.svc.cluster.local
+Address 1: 172.16.0.1 kubernetes.default.svc.cluster.local
 ```
 
 Next: [Smoke Test](15-smoke-test.md)

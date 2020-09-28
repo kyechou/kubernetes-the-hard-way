@@ -40,8 +40,9 @@ kubectl get pods -n kube-system
 
 ```
 NAME              READY   STATUS    RESTARTS   AGE
-weave-net-58j2j   2/2     Running   0          89s
-weave-net-rr5dk   2/2     Running   0          89s
+weave-net-8z269   2/2     Running   0          3m30s
+weave-net-szn7l   2/2     Running   0          3m30s
+weave-net-xwjsh   2/2     Running   0          3m30s
 ```
 
 Reference: https://kubernetes.io/docs/tasks/administer-cluster/network-policy-provider/weave-network-policy/#install-the-weave-net-addon
