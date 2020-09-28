@@ -47,7 +47,7 @@ Kubernetes The Hard Way guides you through bootstrapping a highly available Kube
     * loadbalancer: `192.168.5.100`.
 * Services network (service cluster IP range): `172.16.0.0/16`.
     * kube-dns (coredns): `172.16.0.10`
-* Pods network (cluster CIDR): `10.222.0.0/16`.
+* Pods network (cluster CIDR): `10.222.0.0/16` (Weave Net uses `10.32.0.0/12` anyway).
 
 ## Labs
 
