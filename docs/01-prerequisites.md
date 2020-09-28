@@ -33,4 +33,4 @@ This is a Vagrant plugin for libvirt provider. Install it as instructed
 [here](https://github.com/vagrant-libvirt/vagrant-libvirt#installation) with
 ```
 vagrant plugin install vagrant-libvirt
-```.
+```
