@@ -219,9 +219,12 @@ EOF
 
 ### Start the Worker Services
 
-On worker-1:
+**Note**:
+Before starting kubelet, remember to disable swapping first (`sudo swapoff -a`),
+and also comment out the swap partition in `/etc/fstab` to disable swapping
+after reboot.
 
-> Before starting kubelet, remember to disable swap first (`sudo swapoff -a`).
+On worker-1:
 
 ```
 sudo systemctl daemon-reload
